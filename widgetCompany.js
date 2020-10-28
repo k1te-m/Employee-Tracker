@@ -1,5 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+const init = require("./widgetFunctions");
 
 // Create Connection
 const connection = mysql.createConnection({
@@ -16,4 +17,5 @@ const connection = mysql.createConnection({
 connection.connect(function (error) {
   if (error) throw error;
   console.log("connected as id " + connection.threadId + "\n");
+  init();
 });
