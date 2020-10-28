@@ -1,3 +1,5 @@
+DROP DATABASE IF EXISTS widgetcompany_db;
+
 CREATE DATABASE widgetcompany_db;
 
 USE widgetcompany_db;
@@ -24,5 +26,6 @@ CREATE TABLE employee (
     role_id INT NOT NULL,
     manager_id INT REFERENCES employee(id),
     PRIMARY KEY (id),
-    FOREIGN KEY (role_id) REFERENCES role(id)
+    FOREIGN KEY (role_id) REFERENCES role(id),
+    FOREIGN KEY (manager_id) REFERENCES employee(id)
 );
