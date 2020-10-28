@@ -2,19 +2,17 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 
-
 // Create Connection
 const connection = mysql.createConnection({
-    host: "localhost",
-  
-    port: 3306,
-  
-    user: "root",
-  
-    password: "",
-    database: "widgetcompany_db",
-  });
+  host: "localhost",
 
+  port: 3306,
+
+  user: "root",
+
+  password: "",
+  database: "widgetcompany_db",
+});
 
 // Inquirer Prompt Questions
 
@@ -43,86 +41,137 @@ const addDREQs = [
 ];
 
 const addDQs = [
-{
+  {
     type: "input",
     name: "departmentName",
-    message: "What is the new department name?"
-}
-]
+    message: "What is the new department name?",
+  },
+];
 
-// const addRQs = [
-// {
-//     type: "input",
-//     name: "roleTitle",
-//     message: "What is the role title?"
-// },
-// {
-//     type: "number",
-//     name: "roleSalary",
-//     message: "What is the role salary?"
-// },
-// {
-//     type: "list",
-//     choices:
-// }
-// ]
 
 // Functions
 
 function addDepartment() {
-    inquirer.prompt(addDQs).then(userDep => {
-        const { departmentName } = userDep;
-        connection.query(
-            `INSERT INTO department SET name = "${departmentName}"`,
-            function (err, res) {
-                if (err) throw err;
-                console.log(`${res.affectedRows} department added.\n Department: ${departmentName}`)
-            }
-        )
-    })
-};
+  inquirer.prompt(addDQs).then((userDep) => {
+    const { departmentName } = userDep;
+    connection.query(
+      `INSERT INTO department SET name = "${departmentName}"`,
+      function (err, res) {
+        if (err) throw err;
+        console.log(
+          `${res.affectedRows} Department Added...\nDepartment: ${departmentName}\n-------------------------`
+        );
+        init();
+      }
+    );
+  });
+}
 
-function addRole() {
+function getDepartments() {
+  connection.query(
+    `SELECT * FROM department`,
+    function(err, res) {
+      if (err) throw err;
+      let departments = [];
+      for (let index = 0; index < res.length; index++) {
+        departments.push(res[index]);
+      }
+      console.log(departments);
+      
+      addRole(departments);
+    }
+  )
+  
+}
 
-};
+function addRole(departments) {
+  let departmentNames = [];
+  for (let index = 0; index < departments.length; index++) {
+    departmentNames.push(departments[index].name);
+  }
 
-function addEmployee() {
+  const addRQs = [
+    {
+        type: "input",
+        name: "roleTitle",
+        message: "What is the role title?"
+    },
+    {
+        type: "number",
+        name: "roleSalary",
+        message: "What is the role salary?"
+    },
+    {
+        type: "list",
+        name: "roleDepartment",
+        choices: departmentNames,
+        message: "What department does the role belong to?"
+    }
+  ]
 
-};
+  inquirer.prompt(addRQs).then(roleResponse => {
+    const { roleTitle } = roleResponse;
+    const { roleSalary } = roleResponse;
+    let { roleDepartment } = roleResponse;
+    
+    for (let index = 0; index < departments.length; index++) {
+      if (roleDepartment === departments[index].name) {
+        roleDepartment = departments[index].id;
+      }
+      
+    }
+
+    
+
+    connection.query(
+      `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`, [`${roleTitle}`, roleSalary, roleDepartment]
+      ,function(err, results){
+        if (err) throw err;
+        console.log("Role created..." + results.affectedRows + " role(s) created.\n" + "-------------------------");
+        init();
+      }
+    )
+  })
+  
+}
+  
+  
+
+function addEmployee() {}
 
 function addEntity() {
-    inquirer.prompt(addDREQs).then(userAdd => {
-        const { addWhat } = userAdd;
-        switch (addWhat) {
-            case "Department":
-                addDepartment();
-                break;
-            case "Role":
-                break;
-            case "Employee":
-                break;
-        }
-    
-    })
+  inquirer.prompt(addDREQs).then((userAdd) => {
+    const { addWhat } = userAdd;
+    switch (addWhat) {
+      case "Department":
+        addDepartment();
+        break;
+      case "Role":
+        getDepartments();
+        break;
+      case "Employee":
+        break;
+    }
+  });
 }
 
 function init() {
-    inquirer.prompt(initQs).then(userAction => {
-        const { action } = userAction;
-        console.log(action);
-        switch (action) {
-            case "Add Department/Role/Employee":
-                addEntity();
-                break;
-            case "View Departments/Roles/Employees":
-                break;
-            case "Update Employee Roles":
-                break;
-            case "EXIT":
-                connection.end();
-                break;
-        }
-    })
+  inquirer.prompt(initQs).then((userAction) => {
+    const { action } = userAction;
+    console.log(action);
+    switch (action) {
+      case "Add Department/Role/Employee":
+        addEntity();
+        break;
+      case "View Departments/Roles/Employees":
+        break;
+      case "Update Employee Roles":
+        break;
+      case "EXIT":
+        process.exit();
+        break;
+    }
+  });
 }
 
-module.exports = init, addEntity, addDepartment;
+module.exports = init, addEntity, addDepartment, addRole, getDepartments;
