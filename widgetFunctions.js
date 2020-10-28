@@ -112,22 +112,23 @@ function addRole(departments) {
   inquirer.prompt(addRQs).then(roleResponse => {
     const { roleTitle } = roleResponse;
     const { roleSalary } = roleResponse;
-    let { roleDepartment } = roleResponse;
+    const { roleDepartment } = roleResponse;
+    let roleDepartmentId;
     
     for (let index = 0; index < departments.length; index++) {
       if (roleDepartment === departments[index].name) {
-        roleDepartment = departments[index].id;
+        roleDepartmentId = departments[index].id;
       }
-      
     }
 
     
 
     connection.query(
-      `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`, [`${roleTitle}`, roleSalary, roleDepartment]
+      `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`, [`${roleTitle}`, roleSalary, roleDepartmentId]
       ,function(err, results){
         if (err) throw err;
-        console.log("Role created..." + results.affectedRows + " role(s) created.\n" + "-------------------------");
+        // console.log("Role created..." + results.affectedRows + " role(s) created.\n" + "-------------------------");
+        console.log(`${roleTitle} role created... ${results.affectedRows} role(s) created in ${roleDepartment} department.\n------------------------`);
         init();
       }
     )
