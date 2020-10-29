@@ -263,23 +263,25 @@ function viewDepartments() {
       console.log(res);
       
       console.table(res);
+      init();
     }
   );
 }
 
 function viewRoles() {
   connection.query(
-    "SELECT * FROM role", function(err, res) {
+    "SELECT role.id, title AS Role, salary AS Salary, department.name AS Department FROM role JOIN department ON role.department_id = department.id ORDER BY role.id", function(err, res) {
       if (err) throw err;
 
       console.table(res);
+      init();
     }
   )
 }
 
 function viewEmployees() {
   connection.query(
-    "SELECT employee.id, first_name AS FirstName, last_name AS LastName, manager_id AS ManagerID,department.name AS Department, title AS Title, salary AS Salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id", function(err, res) {
+    "SELECT employee.id, first_name AS FirstName, last_name AS LastName, manager_id AS ManagerID,department.name AS Department, title AS Title, salary AS Salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY department.name", function(err, res) {
       if (err) throw err;
 
       console.table(res);
