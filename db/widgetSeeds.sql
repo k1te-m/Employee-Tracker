@@ -32,14 +32,26 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Rachel", "Anderson", 2, 1);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Yosef", "Mathis", 2, 1);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Denise", "Williams", 3, null);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Steve", "Brown", 4, 3);
+VALUES ("Steve", "Brown", 4, 4);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Ivie", "Costa", 4, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Becky", "Ross", 5, null);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("Lars", "Navarro", 6, 5);
+VALUES ("Lars", "Navarro", 6, 7);
+
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES ("Elizabeth", "Mercado", 6, 7);
+
+
+
 
