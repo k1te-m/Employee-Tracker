@@ -259,7 +259,7 @@ function viewDepartments() {
     res
   ) {
     if (err) throw err;
-  
+
     console.table(res);
     init();
   });
@@ -317,13 +317,11 @@ function employeeUpdate() {
     let employeeNames = ["N/A"];
     for (let index = 0; index < res.length; index++) {
       employees.push(res[index]);
-      let fullName = `${res[index].first_name} ${res[index].last_name}`
+      let fullName = `${res[index].first_name} ${res[index].last_name}`;
       employeeNames.push(fullName);
     }
     getIDs(employees, employeeNames);
   });
-
-
 }
 
 function getIDs(employees, employeeNames) {
@@ -338,8 +336,8 @@ function getIDs(employees, employeeNames) {
       type: "list",
       choices: employeeNames,
       name: "reportsTo",
-      message: "Who will this employee now report to?"
-    }
+      message: "Who will this employee now report to?",
+    },
   ];
 
   inquirer.prompt(updateEmpRole).then((response) => {
@@ -353,7 +351,6 @@ function getIDs(employees, employeeNames) {
     let managerID;
 
     for (let index = 0; index < employees.length; index++) {
-      
       if (empLastName == employees[index].last_name) {
         employeeID = employees[index].id;
       }
@@ -389,36 +386,35 @@ function getRolesUpdate(employeeID, managerID) {
       },
     ];
 
-    inquirer.prompt(updateRoleQs).then(newRoleAssign => {
+    inquirer.prompt(updateRoleQs).then((newRoleAssign) => {
       const { newRole } = newRoleAssign;
-      
 
       for (let index = 0; index < roles.length; index++) {
         if (newRole == roles[index].title) {
           roleID = roles[index].id;
         }
       }
-      
+
       finalUpdate(employeeID, managerID, roleID);
-    })
+    });
   });
 }
 
-function finalUpdate(employeeID, managerID, roleID){
+function finalUpdate(employeeID, managerID, roleID) {
   employeeID;
   managerID;
   roleID;
 
   const query = `UPDATE employee SET role_id = ${roleID}, manager_id = ${managerID} WHERE id = ${employeeID}`;
 
-  connection.query(query, function(err, res) {
+  connection.query(query, function (err, res) {
     if (err) throw err;
     if (res.affectedRows > 0) {
       console.log(`Success... Employee role has been updated.`);
+      init();
     }
-  })
+  });
 }
-
 
 // Init Function
 function init() {
