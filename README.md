@@ -22,7 +22,9 @@
 
   *Examples of project use:*
 
-  Will Update
+  ### Adding Entities
+  ![addDepartment](/assets/addDepartment.PNG)
+  
 
   ## Contributing
 
