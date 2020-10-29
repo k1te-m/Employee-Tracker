@@ -368,13 +368,13 @@ function test2(employees, employeeNames) {
         managerID = employees[index].id;
       }
     }
-    let query = `UPDATE employee SET manager_id = ${managerID} WHERE id = ${employeeID}`;
-    connection.query(query, function(err, res) {
-      if (err) throw err;
-      if (res.affectedRows > 0) {
-        console.log("Employee Manager Updated.");
-      }
-    })
+    // let query = `UPDATE employee SET manager_id = ${managerID} WHERE id = ${employeeID}`;
+    // connection.query(query, function(err, res) {
+    //   if (err) throw err;
+    //   if (res.affectedRows > 0) {
+    //     console.log("Employee Manager Updated.");
+    //   }
+    // })
     test3(employeeID, managerID);
   });
 }
@@ -384,6 +384,9 @@ function test3(employeeID, managerID) {
     if (err) throw err;
     let roles = [];
     let roleTitles = [];
+    let roleID;
+    employeeID;
+    managerID;
     for (let index = 0; index < res.length; index++) {
       roles.push(res[index]);
       roleTitles.push(res[index].title);
@@ -397,10 +400,38 @@ function test3(employeeID, managerID) {
       },
     ];
 
+    console.log(roles);
+    console.log(roleTitles);
+    console.log(employeeID);
+    console.log(managerID);
     inquirer.prompt(updateRoleQs).then(newRoleAssign => {
       const { newRole } = newRoleAssign;
+      console.log(newRole);
+
+      for (let index = 0; index < roles.length; index++) {
+        if (newRole == roles[index].title) {
+          roleID = roles[index].id;
+        }
+      }
+      console.log(roleID);
+      finalUpdate(employeeID, managerID, roleID);
     })
   });
+}
+
+function finalUpdate(employeeID, managerID, roleID){
+  employeeID;
+  managerID;
+  roleID;
+
+  const query = `UPDATE employee SET role_id = ${roleID}, manager_id = ${managerID} WHERE id = ${employeeID}`;
+
+  connection.query(query, function(err, res) {
+    if (err) throw err;
+    if (res.affectedRows > 0) {
+      console.log(`Success... Employee role has been updated.`);
+    }
+  })
 }
 
 
