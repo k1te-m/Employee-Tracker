@@ -22,8 +22,21 @@
 
   *Examples of project use:*
 
+  ### Demo Video
+  [Employee-Tracker-Demo](https://drive.google.com/file/d/1qubomgaXGun1BAlLc6XsscKyI6ZVnOu-/view)
+
+  ### Viewing Tables
+  ![viewDepartment](/Assets/viewDepartment.PNG)
+  ![viewRoles](/Assets/viewRoles.PNG)
+  ![viewEmployees](/Assets/viewEmployees.PNG)
+
   ### Adding Entities
-  ![addDepartment](./assets/addDepartment.PNG)
+  ![addDepartment](/Assets/addDepartment.PNG)
+  ![addRole](/Assets/addRole.PNG)
+  ![addEmployee](/Assets/addEmployee.PNG)
+
+  ### Update Employee Roles & Manager
+  ![updateEmployee](/Assets/updateEmployee.PNG)
   
 
   ## Contributing
