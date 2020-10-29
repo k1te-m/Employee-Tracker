@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
 
   user: "root",
 
-  password: "",
+  password: "root",
   database: "widgetcompany_db",
 });
 
@@ -49,16 +49,12 @@ const addDQs = [
 ];
 
 const viewWhat = [
-{
-  type: "list",
-  choices: [
-    "View Departments",
-    "View Roles",
-    "View Employees"
-  ],
-  name: "view",
-  message: "What table would you like to view?"
-}
+  {
+    type: "list",
+    choices: ["View Departments", "View Roles", "View Employees"],
+    name: "view",
+    message: "What table would you like to view?",
+  },
 ];
 
 // Add Functions
@@ -142,6 +138,7 @@ function addRole(departments) {
   });
 }
 
+// Combine getRoles and getEmployees with better mySQL query
 function getRoles() {
   connection.query(`SELECT * from role`, function (err, res) {
     if (err) throw err;
@@ -257,41 +254,44 @@ function addEntity() {
 // View Functions
 
 function viewDepartments() {
+  connection.query("SELECT id, name AS Department FROM department", function (
+    err,
+    res
+  ) {
+    if (err) throw err;
+    console.log(res);
+
+    console.table(res);
+    init();
+  });
+}
+
+function viewRoles() {
   connection.query(
-    "SELECT id, name AS Department FROM department", function(err, res) {
+    "SELECT role.id, title AS Role, salary AS Salary, department.name AS Department FROM role JOIN department ON role.department_id = department.id ORDER BY role.id",
+    function (err, res) {
       if (err) throw err;
-      console.log(res);
-      
+
       console.table(res);
       init();
     }
   );
 }
 
-function viewRoles() {
-  connection.query(
-    "SELECT role.id, title AS Role, salary AS Salary, department.name AS Department FROM role JOIN department ON role.department_id = department.id ORDER BY role.id", function(err, res) {
-      if (err) throw err;
-
-      console.table(res);
-      init();
-    }
-  )
-}
-
 function viewEmployees() {
   connection.query(
-    "SELECT employee.id, first_name AS FirstName, last_name AS LastName, manager_id AS ManagerID,department.name AS Department, title AS Title, salary AS Salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY department.name", function(err, res) {
+    "SELECT employee.id, first_name AS FirstName, last_name AS LastName, manager_id AS ManagerID,department.name AS Department, title AS Title, salary AS Salary FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY department.name",
+    function (err, res) {
       if (err) throw err;
 
       console.table(res);
       init();
     }
-  )
+  );
 }
 
 function viewEntity() {
-  inquirer.prompt(viewWhat).then(userView => {
+  inquirer.prompt(viewWhat).then((userView) => {
     const { view } = userView;
     switch (view) {
       case "View Departments":
@@ -304,9 +304,59 @@ function viewEntity() {
         viewEmployees();
         break;
     }
-  })
+  });
 }
 
+// Update Functions
+function test() {
+  connection.query(`SELECT id, first_name, last_name from employee`, function (
+    err,
+    res
+  ) {
+    if (err) throw err;
+    let employees = [];
+    let employeeNames = [];
+    for (let index = 0; index < res.length; index++) {
+      employees.push(res[index]);
+      let fullName = `${res[index].first_name} ${res[index].last_name}`
+      employeeNames.push(fullName);
+    }
+    console.log(employees);
+    console.log(employeeNames);
+    test2(employees, employeeNames);
+  });
+
+
+}
+
+function test2(employees, employeeNames) {
+  const updateEmpRole = [
+    {
+      type: "list",
+      choices: employeeNames,
+      name: "roleUpd",
+      message: "Which employee's role would you like to update?",
+    },
+  ];
+
+  inquirer.prompt(updateEmpRole).then((response) => {
+    console.log(response);
+    const { roleUpd } = response;
+    let name = roleUpd.split(" ");
+    let lastName = name[1];
+    let employeeID;
+
+    for (let index = 0; index < employees.length; index++) {
+      
+      if (lastName == employees[index].last_name) {
+        employeeID = employees[index].id;
+      }
+    }
+    
+  });
+}
+
+// Init Function
 function init() {
   inquirer.prompt(initQs).then((userAction) => {
     const { action } = userAction;
@@ -318,6 +368,7 @@ function init() {
         viewEntity();
         break;
       case "Update Employee Roles":
+        test();
         break;
       case "EXIT":
         process.exit();
