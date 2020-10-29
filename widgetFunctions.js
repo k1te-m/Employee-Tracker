@@ -48,7 +48,20 @@ const addDQs = [
   },
 ];
 
-// Functions
+const viewWhat = [
+{
+  type: "list",
+  choices: [
+    "View Departments",
+    "View Roles",
+    "View Employees"
+  ],
+  name: "view",
+  message: "What table would you like to view?"
+}
+];
+
+// Add Functions
 
 function addDepartment() {
   inquirer.prompt(addDQs).then((userDep) => {
@@ -241,6 +254,56 @@ function addEntity() {
   });
 }
 
+// View Functions
+
+function viewDepartments() {
+  connection.query(
+    "SELECT id, name AS Department FROM department", function(err, res) {
+      if (err) throw err;
+      console.log(res);
+      
+      console.table(res);
+    }
+  );
+}
+
+function viewRoles() {
+  connection.query(
+    "SELECT * FROM role", function(err, res) {
+      if (err) throw err;
+
+      console.table(res);
+    }
+  )
+}
+
+function viewEmployees() {
+  connection.query(
+    "SELECT * FROM employee", function(err, res) {
+      if (err) throw err;
+
+      console.table(res);
+    }
+  )
+}
+
+function viewEntity() {
+  inquirer.prompt(viewWhat).then(userView => {
+    const { view } = userView;
+    switch (view) {
+      case "View Departments":
+        viewDepartments();
+        break;
+      case "View Roles":
+        viewRoles();
+        break;
+      case "View Employees":
+        viewEmployees();
+        break;
+    }
+  })
+}
+
 function init() {
   inquirer.prompt(initQs).then((userAction) => {
     const { action } = userAction;
@@ -249,12 +312,12 @@ function init() {
         addEntity();
         break;
       case "View Departments/Roles/Employees":
+        viewEntity();
         break;
       case "Update Employee Roles":
         break;
       case "EXIT":
         process.exit();
-        break;
     }
   });
 }
