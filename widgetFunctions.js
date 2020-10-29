@@ -1,6 +1,7 @@
 // Dependencies
 const inquirer = require("inquirer");
 const mysql = require("mysql");
+const connection = require("./server");
 
 // Create Connection
 const connection = mysql.createConnection({
@@ -10,7 +11,7 @@ const connection = mysql.createConnection({
 
   user: "root",
 
-  password: "root",
+  password: "",
   database: "widgetcompany_db",
 });
 
@@ -308,7 +309,7 @@ function viewEntity() {
 }
 
 // Update Functions
-function test() {
+function employeeUpdate() {
   connection.query(`SELECT id, first_name, last_name from employee`, function (
     err,
     res
@@ -323,13 +324,13 @@ function test() {
     }
     console.log(employees);
     console.log(employeeNames);
-    test2(employees, employeeNames);
+    getIDs(employees, employeeNames);
   });
 
 
 }
 
-function test2(employees, employeeNames) {
+function getIDs(employees, employeeNames) {
   const updateEmpRole = [
     {
       type: "list",
@@ -368,18 +369,11 @@ function test2(employees, employeeNames) {
         managerID = employees[index].id;
       }
     }
-    // let query = `UPDATE employee SET manager_id = ${managerID} WHERE id = ${employeeID}`;
-    // connection.query(query, function(err, res) {
-    //   if (err) throw err;
-    //   if (res.affectedRows > 0) {
-    //     console.log("Employee Manager Updated.");
-    //   }
-    // })
-    test3(employeeID, managerID);
+    getRolesUpdate(employeeID, managerID);
   });
 }
 
-function test3(employeeID, managerID) {
+function getRolesUpdate(employeeID, managerID) {
   connection.query(`SELECT * from role`, function (err, res) {
     if (err) throw err;
     let roles = [];
@@ -447,7 +441,7 @@ function init() {
         viewEntity();
         break;
       case "Update Employee Roles":
-        test();
+        employeeUpdate();
         break;
       case "EXIT":
         process.exit();
