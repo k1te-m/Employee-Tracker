@@ -11,7 +11,7 @@ const connection = mysql.createConnection({
 
   user: "root",
 
-  password: "",
+  password: "root",
   database: "widgetcompany_db",
 });
 
@@ -20,3 +20,5 @@ connection.connect(function (error) {
   console.log("connected as id " + connection.threadId + "\n");
   init();
 });
+
+module.exports = connection;
