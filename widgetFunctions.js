@@ -48,7 +48,6 @@ const addDQs = [
   },
 ];
 
-
 // Functions
 
 function addDepartment() {
@@ -68,20 +67,15 @@ function addDepartment() {
 }
 
 function getDepartments() {
-  connection.query(
-    `SELECT * FROM department`,
-    function(err, res) {
-      if (err) throw err;
-      let departments = [];
-      for (let index = 0; index < res.length; index++) {
-        departments.push(res[index]);
-      }
-      console.log(departments);
-      
-      addRole(departments);
+  connection.query(`SELECT * FROM department`, function (err, res) {
+    if (err) throw err;
+    let departments = [];
+    for (let index = 0; index < res.length; index++) {
+      departments.push(res[index]);
     }
-  )
-  
+
+    addRole(departments);
+  });
 }
 
 function addRole(departments) {
@@ -92,53 +86,143 @@ function addRole(departments) {
 
   const addRQs = [
     {
-        type: "input",
-        name: "roleTitle",
-        message: "What is the role title?"
+      type: "input",
+      name: "roleTitle",
+      message: "What is the role title?",
     },
     {
-        type: "number",
-        name: "roleSalary",
-        message: "What is the role salary?"
+      type: "number",
+      name: "roleSalary",
+      message: "What is the role salary?",
     },
     {
-        type: "list",
-        name: "roleDepartment",
-        choices: departmentNames,
-        message: "What department does the role belong to?"
-    }
-  ]
+      type: "list",
+      name: "roleDepartment",
+      choices: departmentNames,
+      message: "What department does the role belong to?",
+    },
+  ];
 
-  inquirer.prompt(addRQs).then(roleResponse => {
+  inquirer.prompt(addRQs).then((roleResponse) => {
     const { roleTitle } = roleResponse;
     const { roleSalary } = roleResponse;
     const { roleDepartment } = roleResponse;
     let roleDepartmentId;
-    
+
     for (let index = 0; index < departments.length; index++) {
       if (roleDepartment === departments[index].name) {
         roleDepartmentId = departments[index].id;
       }
     }
 
-    
-
     connection.query(
-      `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`, [`${roleTitle}`, roleSalary, roleDepartmentId]
-      ,function(err, results){
+      `INSERT INTO role (title, salary, department_id) VALUES (?,?,?)`,
+      [`${roleTitle}`, roleSalary, roleDepartmentId],
+      function (err, results) {
         if (err) throw err;
-        // console.log("Role created..." + results.affectedRows + " role(s) created.\n" + "-------------------------");
-        console.log(`${roleTitle} role created... ${results.affectedRows} role(s) created in ${roleDepartment} department.\n------------------------`);
+        console.log(
+          `${roleTitle} role created... ${results.affectedRows} role(s) created in ${roleDepartment} department.\n------------------------`
+        );
         init();
       }
-    )
-  })
-  
+    );
+  });
 }
-  
-  
 
-function addEmployee() {}
+function getRoles() {
+  connection.query(`SELECT * from role`, function (err, res) {
+    if (err) throw err;
+    let roles = [];
+
+    for (let index = 0; index < res.length; index++) {
+      roles.push(res[index]);
+    }
+    getEmployees(roles);
+  });
+}
+
+function getEmployees(roles) {
+  connection.query(`SELECT id, first_name, last_name from employee`, function (
+    err,
+    res
+  ) {
+    if (err) throw err;
+    let employees = [];
+    for (let index = 0; index < res.length; index++) {
+      employees.push(res[index]);
+    }
+    addEmployee(roles, employees);
+  });
+}
+
+function addEmployee(roles, employees) {
+  let roleTitles = [];
+  let employeeNames = ["N/A"];
+  for (let index = 0; index < employees.length; index++) {
+    employeeNames.push(employees[index].last_name);
+  }
+  for (let index = 0; index < roles.length; index++) {
+    roleTitles.push(roles[index].title);
+  }
+
+  const addEQs = [
+    {
+      type: "input",
+      name: "firstname",
+      message: "What is the employee's first name?",
+    },
+    {
+      type: "input",
+      name: "lastname",
+      message: "What is the employees last name?",
+    },
+    {
+      type: "list",
+      name: "roleTitle",
+      choices: roleTitles,
+      message: "What is the employee's role?",
+    },
+    {
+      type: "list",
+      name: "managerName",
+      choices: employeeNames,
+      message: "Who does this employee currently report to?",
+    },
+  ];
+
+  inquirer.prompt(addEQs).then((empResponse) => {
+    const { firstname } = empResponse;
+    const { lastname } = empResponse;
+    const { roleTitle } = empResponse;
+    const { managerName } = empResponse;
+    let roleID;
+    let managerID;
+
+    for (let index = 0; index < roles.length; index++) {
+      if (roleTitle === roles[index].title) {
+        roleID = roles[index].id;
+      }
+    }
+
+    for (let index = 0; index < employees.length; index++) {
+      if (managerName === employees[index].last_name) {
+        managerID = employees[index].id;
+      }
+    }
+
+    connection.query(
+      `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)`,
+      [`${firstname}`, `${lastname}`, roleID, managerID],
+      function (err, results) {
+        if (err) throw err;
+        console.log(
+          `Success... ${firstname} ${lastname} has been successfully added to the database.`
+        );
+        init();
+      }
+    );
+  });
+}
 
 function addEntity() {
   inquirer.prompt(addDREQs).then((userAdd) => {
@@ -151,6 +235,7 @@ function addEntity() {
         getDepartments();
         break;
       case "Employee":
+        getRoles();
         break;
     }
   });
@@ -159,7 +244,6 @@ function addEntity() {
 function init() {
   inquirer.prompt(initQs).then((userAction) => {
     const { action } = userAction;
-    console.log(action);
     switch (action) {
       case "Add Department/Role/Employee":
         addEntity();
@@ -175,4 +259,9 @@ function init() {
   });
 }
 
-module.exports = init, addEntity, addDepartment, addRole, getDepartments;
+(module.exports = init),
+  addEntity,
+  addDepartment,
+  addRole,
+  getDepartments,
+  connection;
