@@ -315,7 +315,7 @@ function test() {
   ) {
     if (err) throw err;
     let employees = [];
-    let employeeNames = [];
+    let employeeNames = ["N/A"];
     for (let index = 0; index < res.length; index++) {
       employees.push(res[index]);
       let fullName = `${res[index].first_name} ${res[index].last_name}`
@@ -337,24 +337,72 @@ function test2(employees, employeeNames) {
       name: "roleUpd",
       message: "Which employee's role would you like to update?",
     },
+    {
+      type: "list",
+      choices: employeeNames,
+      name: "reportsTo",
+      message: "Who will this employee now report to?"
+    }
   ];
 
   inquirer.prompt(updateEmpRole).then((response) => {
     console.log(response);
     const { roleUpd } = response;
-    let name = roleUpd.split(" ");
-    let lastName = name[1];
+    const { reportsTo } = response;
+    let empName = roleUpd.split(" ");
+    let empLastName = empName[1];
+    let manName = reportsTo.split(" ");
+    let manLastName = manName[1];
     let employeeID;
+    let managerID;
 
     for (let index = 0; index < employees.length; index++) {
       
-      if (lastName == employees[index].last_name) {
+      if (empLastName == employees[index].last_name) {
         employeeID = employees[index].id;
       }
     }
-    
+
+    for (let index = 0; index < employees.length; index++) {
+      if (manLastName == employees[index].last_name) {
+        managerID = employees[index].id;
+      }
+    }
+    let query = `UPDATE employee SET manager_id = ${managerID} WHERE id = ${employeeID}`;
+    connection.query(query, function(err, res) {
+      if (err) throw err;
+      if (res.affectedRows > 0) {
+        console.log("Employee Manager Updated.");
+      }
+    })
+    test3(employeeID, managerID);
   });
 }
+
+function test3(employeeID, managerID) {
+  connection.query(`SELECT * from role`, function (err, res) {
+    if (err) throw err;
+    let roles = [];
+    let roleTitles = [];
+    for (let index = 0; index < res.length; index++) {
+      roles.push(res[index]);
+      roleTitles.push(res[index].title);
+    }
+    const updateRoleQs = [
+      {
+        type: "list",
+        choices: roleTitles,
+        name: "newRole",
+        message: "What is the employee's new role?",
+      },
+    ];
+
+    inquirer.prompt(updateRoleQs).then(newRoleAssign => {
+      const { newRole } = newRoleAssign;
+    })
+  });
+}
+
 
 // Init Function
 function init() {
