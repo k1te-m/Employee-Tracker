@@ -259,8 +259,7 @@ function viewDepartments() {
     res
   ) {
     if (err) throw err;
-    console.log(res);
-
+  
     console.table(res);
     init();
   });
@@ -321,8 +320,6 @@ function employeeUpdate() {
       let fullName = `${res[index].first_name} ${res[index].last_name}`
       employeeNames.push(fullName);
     }
-    console.log(employees);
-    console.log(employeeNames);
     getIDs(employees, employeeNames);
   });
 
@@ -346,7 +343,6 @@ function getIDs(employees, employeeNames) {
   ];
 
   inquirer.prompt(updateEmpRole).then((response) => {
-    console.log(response);
     const { roleUpd } = response;
     const { reportsTo } = response;
     let empName = roleUpd.split(" ");
@@ -393,20 +389,16 @@ function getRolesUpdate(employeeID, managerID) {
       },
     ];
 
-    console.log(roles);
-    console.log(roleTitles);
-    console.log(employeeID);
-    console.log(managerID);
     inquirer.prompt(updateRoleQs).then(newRoleAssign => {
       const { newRole } = newRoleAssign;
-      console.log(newRole);
+      
 
       for (let index = 0; index < roles.length; index++) {
         if (newRole == roles[index].title) {
           roleID = roles[index].id;
         }
       }
-      console.log(roleID);
+      
       finalUpdate(employeeID, managerID, roleID);
     })
   });
