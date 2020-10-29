@@ -1,7 +1,6 @@
 // Dependencies
 const inquirer = require("inquirer");
 const mysql = require("mysql");
-const connection = require("./server");
 
 // Create Connection
 const connection = mysql.createConnection({
@@ -11,7 +10,7 @@ const connection = mysql.createConnection({
 
   user: "root",
 
-  password: "",
+  password: "root",
   database: "widgetcompany_db",
 });
 
