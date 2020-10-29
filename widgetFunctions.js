@@ -279,10 +279,11 @@ function viewRoles() {
 
 function viewEmployees() {
   connection.query(
-    "SELECT * FROM employee", function(err, res) {
+    "SELECT employee.id, first_name AS FirstName, last_name AS LastName, manager_id AS ManagerID, title AS Title, salary AS Salary, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id", function(err, res) {
       if (err) throw err;
 
       console.table(res);
+      init();
     }
   )
 }
