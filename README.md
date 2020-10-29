@@ -23,7 +23,7 @@
   *Examples of project use:*
 
   ### Adding Entities
-  ![addDepartment](/assets/addDepartment.PNG)
+  ![addDepartment](./assets/addDepartment.PNG)
   
 
   ## Contributing
