@@ -1,7 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const init = require("./widgetFunctions")
-
+const init = require("./widgetFunctions");
 
 // Create Connection
 const connection = mysql.createConnection({
