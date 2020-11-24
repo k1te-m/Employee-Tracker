@@ -2,7 +2,7 @@
 
   ![GitHub](https://img.shields.io/github/license/k1te-m/Employee-Tracker)![GitHub top language](https://img.shields.io/github/languages/top/k1te-m/Employee-Tracker)
 
-  ## Descripton
+  ## Description
   This application is intended to be used as a Content Management System for a fictional company. Allowing non-developers the ability to view and interact with information stored in our database. When the server connection is established, the user is prompted for an action, Add Departments/Roles/Employees, View Departments/Roles/Employees, or Update Employee Roles. Based on their selection they are prompted with further questions or presented with the information they have specified. When utilizing the add or update actions, the user inputs are added to or updated within the database. 
 
   ## Table of Contents
